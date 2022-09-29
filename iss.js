@@ -20,12 +20,22 @@ const fetchMyIP = function(callback) {
 
 const fetchCoordsByIP = function(ip, callback) {
   request('http://ipwho.is/' + ip, (error, response, body) =>{
-    console.log('error', error);
-    console.log('status code', response.statusCode);
-    const ipInfo = JSON.parse(body);
-    const lat = ipInfo.latitude;
-    const lng = ipInfo.longitude;
-    console.log(`latitude: ${lat}, longitude ${lng}`);
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    if (response.statusCode !== 200) {
+      const msg = `Status Code ${response.statusCode} when fetching coordinates. Response: ${body}`;
+      callback(Error(msg), null);
+      return;
+    }
+    const parsedBody = JSON.parse(body);
+    if (!parsedBody.success) {
+      callback(Error(parsedBody.message), null);
+      return;
+    }
+    const { latitude, longitude } = parsedBody;
+    callback(null, { latitude, longitude });
   });
 };
 
