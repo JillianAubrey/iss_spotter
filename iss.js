@@ -18,4 +18,15 @@ const fetchMyIP = function(callback) {
   });
 };
 
-module.exports = { fetchMyIP };
+const fetchCoordsByIP = function(ip, callback) {
+  request('http://ipwho.is/' + ip, (error, response, body) =>{
+    console.log('error', error);
+    console.log('status code', response.statusCode);
+    const ipInfo = JSON.parse(body);
+    const lat = ipInfo.latitude;
+    const lng = ipInfo.longitude;
+    console.log(`latitude: ${lat}, longitude ${lng}`);
+  });
+};
+
+module.exports = { fetchMyIP, fetchCoordsByIP };
