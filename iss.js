@@ -50,7 +50,8 @@ const fetchISSFlyOverTimes = function(coords, callback) {
       callback(Error(msg), null);
       return;
     }
-    console.log(JSON.parse(body).response);
+    const flyOvers = JSON.parse(body).response;
+    callback(null, flyOvers);
   });
 };
 

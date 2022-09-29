@@ -17,6 +17,7 @@ fetchMyIP((error, ip) => {
         console.log("There was an error while fetching the ISS flyover times!\n" , error);
         return;
       }
+      console.log(results);
     });
   });
 });
