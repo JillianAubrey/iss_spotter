@@ -1,5 +1,5 @@
 const request = require('request');
-
+let timezone;
 
 const fetchMyIP = function(callback) {
   request('https://api.ipify.org?format=json', (error, response, body) =>{
@@ -35,6 +35,8 @@ const fetchCoordsByIP = function(ip, callback) {
       return;
     }
     const { latitude, longitude } = parsedBody;
+    timezone = parsedBody.timezone;
+    console.log(`The next ISS passes for ${parsedBody.city}:`);
     callback(null, { latitude, longitude });
   });
 };
@@ -55,4 +57,26 @@ const fetchISSFlyOverTimes = function(coords, callback) {
   });
 };
 
-module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
+const nextISSTimesForMyLocation = function(callback) {
+  fetchMyIP((error, ip) => {
+    if (error) {
+      console.log("There was an error while fetching the IP address!\n" , error);
+      return;
+    }
+    fetchCoordsByIP(ip, (error, coords) => {
+      if (error) {
+        console.log("There was an error while fetching the coordinates!\n" , error);
+        return;
+      }
+      fetchISSFlyOverTimes(coords, (error, results) => {
+        if (error) {
+          console.log("There was an error while fetching the ISS flyover times!\n" , error);
+          return;
+        }
+        callback(null, results, timezone);
+      });
+    });
+  });
+};
+
+module.exports = { nextISSTimesForMyLocation };

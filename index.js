@@ -1,23 +1,19 @@
-const { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes } = require('./iss');
+const { nextISSTimesForMyLocation } = require('./iss');
 
-fetchMyIP((error, ip) => {
+nextISSTimesForMyLocation((error, passTimes, timezone) => {
   if (error) {
-    console.log("There was an error while fetching the IP address!\n" , error);
-    return;
+    return console.log("It didn't work!", error);
   }
-  console.log('IP Adress:' , ip);
-  fetchCoordsByIP(ip, (error, coords) => {
-    if (error) {
-      console.log("There was an error while fetching the coordinates!\n" , error);
-      return;
-    }
-    console.log(`Coordinates: ${coords.latitude}, ${coords.longitude}`);
-    fetchISSFlyOverTimes(coords, (error, results) => {
-      if (error) {
-        console.log("There was an error while fetching the ISS flyover times!\n" , error);
-        return;
-      }
-      console.log(results);
-    });
-  });
+  // success, print out the deets!
+  printPassTimes(passTimes, timezone);
 });
+
+const printPassTimes = function(passTimes, timezone) {
+  passTimes.forEach((pass)=>  {
+    const dateObject = new Date(0);
+    dateObject.setUTCSeconds(pass.risetime);
+    const dateStr = `${dateObject.toLocaleString("en-US", {timeZone: timezone.id})} ${timezone.abbr}`;
+    const duration = pass.duration;
+    console.log(`Next pass at ${dateStr} for ${duration} seconds!`);
+  });
+};
