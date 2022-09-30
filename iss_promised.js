@@ -4,4 +4,9 @@ const fetchMyIP = function() {
   return request('https://api.ipify.org?format=json');
 };
 
-module.exports = { fetchMyIP };
+const fetchCoordsByIP = function(body) {
+  const ip = JSON.parse(body).ip;
+  return request('http://ipwho.is/' + ip);
+};
+
+module.exports = { fetchMyIP, fetchCoordsByIP };
