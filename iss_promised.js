@@ -21,6 +21,10 @@ const nextISSTimesForMyLocation = function() {
     .then(body => {
       const { response } = JSON.parse(body);
       return response;
+    })
+    .catch((error) => {
+      console.log("It didn't work: ", error.message);
+      return error;
     });
 };
 
